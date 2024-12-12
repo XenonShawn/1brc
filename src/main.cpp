@@ -1,5 +1,5 @@
 #include <iostream>
-#include "naive.cpp"
+#include "naive.h"
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -9,5 +9,7 @@ int main(int argc, char** argv) {
     }
 
     std::string filename(argv[1]);
-    return naive(filename);
+    Naive::solve(filename);
+    
+    return 0;
 }

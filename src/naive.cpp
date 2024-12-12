@@ -11,6 +11,8 @@
 #include <string_view>
 #include <utility>
 
+#include "naive.h"
+
 struct Information {
     // Fixed point, with two decimal places
     double min = std::numeric_limits<double>().max();
@@ -22,7 +24,7 @@ struct Information {
         std::cout 
             << name << '=' 
             << min << '/'
-            << round(sum / num_measurements * 10.0) / 10.0 << '/'
+            << round(sum / static_cast<double>(num_measurements) * 10.0) / 10.0 << '/'
             << max;
     }
 };
@@ -33,11 +35,11 @@ struct Information {
  * - Process each row sequentially, keeping track of all information
  * - Uses a map to keep track of every weather station.
  */
-int naive(std::string filename) {
+void Naive::solve(std::string filename) {
     std::ifstream input(filename);
     if (!input.is_open()) {
         std::cerr << "Unable to open provided file: " << filename << '\n';
-        return 1;
+        return;
     }
 
     std::map<std::string, Information> measurements;
@@ -69,6 +71,4 @@ int naive(std::string filename) {
         it->second.print(it->first);
     }
     std::cout << "}\n";
-
-    return 0;
 }
