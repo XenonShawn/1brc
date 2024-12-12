@@ -14,7 +14,6 @@
 #include "naive.h"
 
 struct Information {
-    // Fixed point, with two decimal places
     double min = std::numeric_limits<double>().max();
     double max = std::numeric_limits<double>().min();
     double sum = 0;
