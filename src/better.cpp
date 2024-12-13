@@ -8,12 +8,12 @@
 #include <iostream>
 #include <vector>
 
-#include "better.h"
+#include "solutions.h"
 
 #include "../../unordered_dense_install/include/ankerl/unordered_dense.h"
 
 struct Information {
-    // Fixed point, two decimal places
+    // Fixed point, one decimal places
     int64_t min = std::numeric_limits<int64_t>().max();
     int64_t max = std::numeric_limits<int64_t>().min();
     int64_t sum = 0;
@@ -46,7 +46,7 @@ inline int64_t parse_measurement(const char *s, size_t size) {
     return result;
 }
 
-void Better::solve(std::string filename) {
+void Solutions::better(std::string filename) {
     std::ifstream input(filename);
     if (!input.is_open()) {
         std::cerr << "Unable to open provided file: " << filename << '\n';

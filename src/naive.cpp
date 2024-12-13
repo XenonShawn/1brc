@@ -7,11 +7,8 @@
 #include <iostream>
 #include <limits>
 #include <map>
-#include <string>
-#include <string_view>
-#include <utility>
 
-#include "naive.h"
+#include "solutions.h"
 
 struct Information {
     double min = std::numeric_limits<double>().max();
@@ -34,7 +31,7 @@ struct Information {
  * - Process each row sequentially, keeping track of all information
  * - Uses a map to keep track of every weather station.
  */
-void Naive::solve(std::string filename) {
+void Solutions::naive(std::string filename) {
     std::ifstream input(filename);
     if (!input.is_open()) {
         std::cerr << "Unable to open provided file: " << filename << '\n';

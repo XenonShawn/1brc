@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "better.h"
+#include "solutions.h"
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     }
 
     std::string filename(argv[1]);
-    Better::solve(filename);
+    Solutions::better(filename);
     
     return 0;
 }
