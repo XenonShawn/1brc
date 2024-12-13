@@ -21,7 +21,7 @@ struct Information {
 
     inline void print(std::string_view name) const {
         bool is_negative = this->sum < 0;
-        int64_t sum = std::abs(this->sum);
+        int64_t sum = std::abs(this->sum) * 10;
 
         sum /= num_measurements;
         sum += 5;
@@ -29,9 +29,9 @@ struct Information {
 
         std::cout 
             << name << '=' 
-            << static_cast<double>(min) / 100 << '/'
+            << static_cast<double>(min) / 10 << '/'
             << (is_negative ? "-" : "") << sum / 10 << '.' << sum % 10 << '/'
-            << static_cast<double>(max) / 100;
+            << static_cast<double>(max) / 10;
     }
 };
 
@@ -41,8 +41,6 @@ inline int64_t parse_measurement(const char *s, size_t size) {
     for (size_t i = is_negative; i < size; i++) {
         result = 10 * result + s[i] - '0';
     }
-
-    result *= 10;
 
     if (is_negative) result *= -1;
     return result;
