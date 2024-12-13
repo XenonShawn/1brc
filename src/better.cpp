@@ -6,12 +6,11 @@
 #include <ios>
 #include <limits>
 #include <iostream>
-#include <map>
-#include <string_view>
-#include <unordered_map>
 #include <vector>
 
 #include "better.h"
+
+#include "../../unordered_dense_install/include/ankerl/unordered_dense.h"
 
 struct Information {
     // Fixed point, two decimal places
@@ -36,13 +35,14 @@ struct Information {
     }
 };
 
-inline int64_t parse_measurement(std::string_view s) {
+inline int64_t parse_measurement(const char *s, size_t size) {
     bool is_negative = s[0] == '-';
     int64_t result = 0;
-    for (size_t i = is_negative; i < s.size(); i++) {
-        result *= 10;
-        result += s[i] - '0';
+    for (size_t i = is_negative; i < size; i++) {
+        result = 10 * result + s[i] - '0';
     }
+
+    result *= 10;
 
     if (is_negative) result *= -1;
     return result;
@@ -55,24 +55,19 @@ void Better::solve(std::string filename) {
         return;
     }
 
-    std::unordered_map<std::string, Information> measurements;
+    ankerl::unordered_dense::map<std::string, Information> measurements;
+    measurements.reserve(5000);
     {
         std::string row;
         while (std::getline(input, row)) {
-            // Each for is one measurement in the format 
-            // <string: station name>;<double: measurement>
             size_t idx = row.find_last_of(';');
-            std::string station_name = row.substr(0, idx);
-            std::string measurement_str = row.substr(idx + 1);
 
-            // Effectively multiply the number by 100
-            size_t n = measurement_str.size();
-            measurement_str[n - 2] = measurement_str[n - 1];
-            measurement_str[n - 1] = '0';
+            size_t n = row.size();
+            row[n - 2] = row[n - 1];
+            int64_t measurement = parse_measurement(row.c_str() + idx + 1, n - idx - 2);
+            row.erase(idx);
 
-            int64_t measurement = parse_measurement(measurement_str);
-
-            Information& info = measurements[station_name];
+            Information& info = measurements[row];
             info.num_measurements++;
             info.sum += measurement;
             info.max = std::max(info.max, measurement);
