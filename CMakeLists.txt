@@ -4,7 +4,7 @@ add_compile_options(-O2)
 
 
 project("One Billion Row Challenge Personal")
-add_executable(main src/main.cpp src/naive.cpp)
+add_executable(main src/main.cpp src/better.cpp)
 
 set(CMAKE_CXX_STANDARD          20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

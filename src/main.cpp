@@ -1,5 +1,6 @@
 #include <iostream>
-#include "naive.h"
+
+#include "better.h"
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -9,7 +10,7 @@ int main(int argc, char** argv) {
     }
 
     std::string filename(argv[1]);
-    Naive::solve(filename);
+    Better::solve(filename);
     
     return 0;
 }

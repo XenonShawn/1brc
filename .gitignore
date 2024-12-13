@@ -34,3 +34,5 @@
 build/
 measurements.txt
 solution.txt
+.cache/
+perf.*
