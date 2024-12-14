@@ -74,20 +74,23 @@ void Solutions::memory_map(const char* filename) {
         return;
     }
     
-    const char *data = static_cast<const char *>(mapped);
+    const char *curr = static_cast<const char *>(mapped);
 
     ankerl::unordered_dense::map<std::string, Information> measurements;
     measurements.reserve(5000);
 
-    const char *curr = data;
-    while (curr < data + fileSize) {
+    const char *final = curr + fileSize;
+    while (curr < final) {
         // Stores the start of the station name/measurement
-        const char *temp = curr; 
-        while (*curr != '\n') curr++;
+        const char *start_of_row = curr; 
 
-        size_t n = static_cast<size_t>(curr - temp);
-        std::string row(temp, n);
-        size_t idx = row.find_last_of(';');
+        curr = strchr(curr, ';');
+        size_t idx = static_cast<size_t>(curr - start_of_row);
+
+        curr = strchr(curr, '\n');
+        size_t n = static_cast<size_t>(curr - start_of_row);
+
+        std::string row(start_of_row, n);
 
         row[n - 2] = row[n - 1];
         int64_t measurement = parse_measurement(row.c_str() + idx + 1, n - idx - 2);
