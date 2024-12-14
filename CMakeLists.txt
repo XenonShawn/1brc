@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 add_compile_options(-Wall -Wextra -Wextra -pedantic-errors -Wconversion -Wsign-conversion)
-add_compile_options(-O2)
+add_compile_options(-O2 -g)
 
 
 project("One Billion Row Challenge Personal")

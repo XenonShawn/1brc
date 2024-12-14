@@ -20,6 +20,11 @@
 
 namespace {
 
+inline void print_fixed(bool is_negative, int64_t non_negative) {
+    if (is_negative) std::cout << '-';
+    std::cout << non_negative / 10 << '.' << non_negative % 10; 
+} 
+
 struct Information {
     // Fixed point, one decimal places
     int64_t min = std::numeric_limits<int64_t>().max();
@@ -35,25 +40,33 @@ struct Information {
         sum += 5;
         sum /= 10;
 
-        std::cout 
-            << name << '=' 
-            << static_cast<double>(min) / 10 << '/'
-            << (is_negative ? "-" : "") << sum / 10 << '.' << sum % 10 << '/'
-            << static_cast<double>(max) / 10;
+        std::cout << name << '=';
+        print_fixed(min < 0, std::abs(min));
+        std::cout << '/';
+        print_fixed(is_negative, sum);
+        std::cout << '/';
+        print_fixed(max < 0, std::abs(max));
     }
 };
 
-inline int64_t parse_measurement(const char *s, size_t size) {
-    bool is_negative = s[0] == '-';
-    int64_t result = 0;
-    for (size_t i = is_negative; i < size - 2; i++) {
-        result = 10 * result + s[i] - '0';
+inline int64_t parse_measurement(const char *s) {
+    int64_t sign = 1;
+    if (*s == '-') {
+        s++;
+        sign = -1;
     }
 
-    result = 10 * result + s[size - 1] - '0';
+    int64_t result = (*s - '0') * 10;
+    ++s;
 
-    if (is_negative) result *= -1;
-    return result;
+    if (*s != '.') {
+        result = (result + *s - '0') * 10;
+        ++s;
+    }
+
+    ++s;
+    result += *s - '0';
+    return result * sign;
 }
 
 }
@@ -101,9 +114,7 @@ void Solutions::memory_map(const char* filename) {
         std::string_view station_name(start_of_row, idx);
 
         const char *end_of_row = strchr(curr, '\n');
-        size_t n = static_cast<size_t>(end_of_row - start_of_row);
-
-        int64_t measurement = parse_measurement(curr + 1, n - idx - 1);
+        int64_t measurement = parse_measurement(curr + 1);
 
         Information& info = measurements[station_name];
         info.num_measurements++;
@@ -119,7 +130,7 @@ void Solutions::memory_map(const char* filename) {
         return lhs.first < rhs.first;
     });
 
-    std::cout << std::fixed << std::setprecision(1) << '{';
+    std::cout << '{';
 
     auto it = all.begin();
     it->second.print(it->first);
