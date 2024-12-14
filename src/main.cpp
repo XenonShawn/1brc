@@ -9,8 +9,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    std::string filename(argv[1]);
-    Solutions::better(filename);
+    Solutions::memory_map(argv[1]);
     
     return 0;
 }

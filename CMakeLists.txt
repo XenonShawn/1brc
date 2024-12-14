@@ -4,7 +4,7 @@ add_compile_options(-O2)
 
 
 project("One Billion Row Challenge Personal")
-add_executable(main src/main.cpp src/better.cpp src/naive.cpp)
+add_executable(main src/main.cpp src/memory_map.cpp src/better.cpp src/naive.cpp)
 
 set(unordered_dense_DIR "/home/shawn/unordered_dense_install/lib/cmake/unordered_dense")
 find_package(unordered_dense CONFIG REQUIRED)
