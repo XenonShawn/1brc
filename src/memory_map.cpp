@@ -44,9 +44,11 @@ struct Information {
 inline int64_t parse_measurement(const char *s, size_t size) {
     bool is_negative = s[0] == '-';
     int64_t result = 0;
-    for (size_t i = is_negative; i < size; i++) {
+    for (size_t i = is_negative; i < size - 2; i++) {
         result = 10 * result + s[i] - '0';
     }
+
+    result = 10 * result + s[size - 1] - '0';
 
     if (is_negative) result *= -1;
     return result;
@@ -76,7 +78,7 @@ void Solutions::memory_map(const char* filename) {
     
     const char *curr = static_cast<const char *>(mapped);
 
-    ankerl::unordered_dense::map<std::string, Information> measurements;
+    ankerl::unordered_dense::map<std::string_view, Information> measurements;
     measurements.reserve(5000);
 
     const char *final = curr + fileSize;
@@ -84,28 +86,31 @@ void Solutions::memory_map(const char* filename) {
         // Stores the start of the station name/measurement
         const char *start_of_row = curr; 
 
+        // NOTE: mmap isn't null terminated, but the input guarantees that there
+        // will exist ; somewhere in the remainder of the string which we have
+        // yet to read.
         curr = strchr(curr, ';');
         size_t idx = static_cast<size_t>(curr - start_of_row);
 
-        curr = strchr(curr, '\n');
-        size_t n = static_cast<size_t>(curr - start_of_row);
+        // string_view is okay here, because we only unmmap AFTER we are done
+        // outputing the result
+        std::string_view station_name(start_of_row, idx);
 
-        std::string row(start_of_row, n);
+        const char *end_of_row = strchr(curr, '\n');
+        size_t n = static_cast<size_t>(end_of_row - start_of_row);
 
-        row[n - 2] = row[n - 1];
-        int64_t measurement = parse_measurement(row.c_str() + idx + 1, n - idx - 2);
-        row.erase(idx);
+        int64_t measurement = parse_measurement(curr + 1, n - idx - 1);
 
-        Information& info = measurements[row];
+        Information& info = measurements[station_name];
         info.num_measurements++;
         info.sum += measurement;
         info.max = std::max(info.max, measurement);
         info.min = std::min(info.min, measurement);
 
-        curr++;
+        curr = end_of_row + 1;
     }
 
-    std::vector<std::pair<std::string, Information>> all(measurements.begin(), measurements.end());
+    std::vector<std::pair<std::string_view, Information>> all(measurements.begin(), measurements.end());
     std::sort(all.begin(), all.end(), [](auto &lhs, auto &rhs){
         return lhs.first < rhs.first;
     });
