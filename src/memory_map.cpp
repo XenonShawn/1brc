@@ -18,6 +18,8 @@
 
 #include "../../unordered_dense_install/include/ankerl/unordered_dense.h"
 
+namespace {
+
 struct Information {
     // Fixed point, one decimal places
     int64_t min = std::numeric_limits<int64_t>().max();
@@ -52,6 +54,8 @@ inline int64_t parse_measurement(const char *s, size_t size) {
 
     if (is_negative) result *= -1;
     return result;
+}
+
 }
 
 void Solutions::memory_map(const char* filename) {

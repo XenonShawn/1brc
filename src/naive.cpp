@@ -10,6 +10,8 @@
 
 #include "solutions.h"
 
+namespace {
+
 struct Information {
     double min = std::numeric_limits<double>().max();
     double max = std::numeric_limits<double>().min();
@@ -24,6 +26,8 @@ struct Information {
             << max;
     }
 };
+
+}
 
 /**
  * This solution for the 1brc does the simplest reasonable method:
@@ -68,3 +72,4 @@ void Solutions::naive(std::string filename) {
     }
     std::cout << "}\n";
 }
+
