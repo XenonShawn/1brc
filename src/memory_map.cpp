@@ -49,26 +49,6 @@ struct Information {
     }
 };
 
-inline int64_t parse_measurement(const char *s) {
-    int64_t sign = 1;
-    if (*s == '-') {
-        s++;
-        sign = -1;
-    }
-
-    int64_t result = (*s - '0') * 10;
-    ++s;
-
-    if (*s != '.') {
-        result = (result + *s - '0') * 10;
-        ++s;
-    }
-
-    ++s;
-    result += *s - '0';
-    return result * sign;
-}
-
 }
 
 void Solutions::memory_map(const char* filename) {
@@ -113,8 +93,24 @@ void Solutions::memory_map(const char* filename) {
         // outputing the result
         std::string_view station_name(start_of_row, idx);
 
-        const char *end_of_row = strchr(curr, '\n');
-        int64_t measurement = parse_measurement(curr + 1);
+        // Parse the measurement manually into a fixed point integer
+        int64_t sign = 1;
+        if (*++curr == '-') {
+            curr++;
+            sign = -1;
+        }
+
+        int64_t measurement = (*curr - '0') * 10;
+        ++curr;
+
+        if (*curr != '.') {
+            measurement = (measurement + *curr - '0') * 10;
+            ++curr;
+        }
+
+        ++curr;
+        measurement += *curr - '0';
+        measurement *= sign;
 
         Information& info = measurements[station_name];
         info.num_measurements++;
@@ -122,7 +118,7 @@ void Solutions::memory_map(const char* filename) {
         info.max = std::max(info.max, measurement);
         info.min = std::min(info.min, measurement);
 
-        curr = end_of_row + 1;
+        curr += 2;
     }
 
     std::vector<std::pair<std::string_view, Information>> all(measurements.begin(), measurements.end());
