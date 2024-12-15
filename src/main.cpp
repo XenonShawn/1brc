@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    Solutions::memory_map(argv[1]);
+    Solutions::multithreaded(argv[1]);
     
     return 0;
 }
