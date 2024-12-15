@@ -86,7 +86,12 @@ void Solutions::memory_map(const char* filename) {
         // NOTE: mmap isn't null terminated, but the input guarantees that there
         // will exist ; somewhere in the remainder of the string which we have
         // yet to read.
+
+        // Also, it's faster than rawmemchr for some reason
+        // curr = static_cast<const char*>(memchr(curr, ';', final - curr)); // slowest
+        // curr = static_cast<const char *>(rawmemchr(curr, ';'));
         curr = strchr(curr, ';');
+
         size_t idx = static_cast<size_t>(curr - start_of_row);
 
         // string_view is okay here, because we only unmmap AFTER we are done

@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.28)
 add_compile_options(-Wall -Wextra -Wextra -pedantic-errors -Wconversion -Wsign-conversion)
-add_compile_options(-O2 -g)
+add_compile_options(-O2 -march=native)
+add_compile_options(-ggdb3 -fno-omit-frame-pointer)
 
 
 project("One Billion Row Challenge Personal")
 add_executable(main src/main.cpp src/memory_map.cpp src/better.cpp src/naive.cpp)
 
-set(unordered_dense_DIR "/home/shawn/unordered_dense_install/lib/cmake/unordered_dense")
+set(unordered_dense_DIR "unordered_dense/unordered_dense_install/lib/cmake/unordered_dense")
 find_package(unordered_dense CONFIG REQUIRED)
 target_link_libraries(main unordered_dense::unordered_dense)
 
