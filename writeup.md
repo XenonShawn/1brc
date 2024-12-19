@@ -5,7 +5,8 @@ challenge in Java to aggregate information as fast as possible. I personally
 thought that it would be a  great way to learn more lower level concepts, as
 well as how to profile a program, so I tried doing this in C++.
 
-challenge to compute the mean, mininum and maximum temperature of one billion temperature measurements (from up to 10000 different stations) in as little time as possible. I personally thought that it would be great way to learn more lower level concepts so I tried to do this in C++. 
+The code I wrote is in the same repository as this writeup, but as this writeup
+is a cleaned up version of the code, it might not look exactly the same.
 
 ## Problem Statement
 
@@ -47,7 +48,7 @@ struct Information {
 std::map<std::string, Information> measurements;
 ```
 
-Then we parse each row for the measurement and toss it into the map.
+We then parse each row for the measurement and toss it into the map.
 
 ```C++
 std::string row;
@@ -74,8 +75,9 @@ this takes approximately 3 minutes and 20 seconds, or 200s total.
 ## Optimizations
 
 Due to how simple the problem statement is, there is not much to be gained by 
-improving upon the algorithm. We need to look at other ways of improving the
-speed of the program. I'll detail five optimizations I made for my program.
+using a better algorithm. Instead, we will need to look at ways to directly 
+improve the speed of the algorithm. I'll detail five optimizations I made for my 
+program.
 
 ### Optimization 1: Fixed Point Integers
 
@@ -177,16 +179,13 @@ std::sort(all.begin(), all.end(), [](auto &lhs, auto &rhs){
 ...
 ```
 
-This brings the solution down to 35.1s, another 69% reduction in runtime!
-
-Sidenote, this hashmap was the best performing one I found, better than Boost's
-and `std`.
+This brings the solution down to 35.1s, another 69% reduction in runtime! 
 
 ### Optimization 3: `mmap`
 
 According to `perf`, one of the major time sinks is in `std::getline`. It makes
 sense, it needs to transfer the information from its internal buffer to the
-string, and also needing to check where the endline is. 
+string, and also needs to check where the endlines are. 
 
 One function I learnt recently was `mmap`, which directly maps the contents of
 a file to the virtual memory space of the program. Instead of the program
@@ -308,11 +307,11 @@ over an order of magnitude!
 ### Optimization 5: Threads
 
 This is not really an optimization, but more of a use of all available compute
-resource that we have access to. I used `std::thread` and split the code into
-`std::thread::hardware_concurrency()` number of chunks. Each of them have
-a preallocated hashmap, and the main thread will wait upon each thread. Once
-each thread is complete, the main thread combines each thread's aggregated 
-information and then prints it out.
+resource that we have access to. Since the task is embarassingly parallel, I 
+used `std::thread` and split the code into `std::thread::hardware_concurrency()` 
+number of chunks. Each of them have a preallocated hashmap, and the main thread 
+will wait upon each thread. Once each thread is complete, the main thread 
+combines each thread's aggregated information and then prints it out.
 
 This brings the final runtime to 3.5s, a mere 1.8% of the original runtime!
 
@@ -328,11 +327,9 @@ runtime:
 According to `perf`, the hashing for the `unordered_dense::map` takes about 10%
 of the CPU's time. Although the challenge says its possible there to be up to
 10000 unique station names of up to 100 bytes with no other restrictions, the
-generated data takes from a list of about 400 names. 
-
-We could perform a sort of analysis on these names to try to find a perfect hash
-function, which will greatly improve the performance of the code for those
-specific inputs.
+generated data takes from a list of about 400 names. We could perform a sort of 
+analysis on these names to try to find a perfect hash function, which will
+greatly improve the performance of the code for those specific inputs.
 
 Alternatively, if we don't want to make assumptions about the exact station
 names, we can also calculate the hash for the `string_view` at the same time
